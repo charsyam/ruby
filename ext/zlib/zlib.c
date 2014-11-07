@@ -558,6 +558,8 @@ struct zstream {
 
 #define ZSTREAM_EXPAND_BUFFER_OK          0
 
+#define AVAIL_IN_IS_EMTPY(z)   ((z)->stream.avail_in == 0)
+
 /* I think that more better value should be found,
    but I gave up finding it. B) */
 #define ZSTREAM_INITIAL_BUFSIZE       1024
@@ -771,7 +773,7 @@ zstream_detach_buffer(struct zstream *z)
     VALUE dst, self = (VALUE)z->stream.opaque;
 
     if (!ZSTREAM_IS_FINISHED(z) && !ZSTREAM_IS_GZFILE(z) &&
-	    rb_block_given_p()) {
+	      !AVAIL_IN_IS_EMTPY(z) && rb_block_given_p()) {
 	/* prevent tiny yields mid-stream, save for next
 	 * zstream_expand_buffer() or stream end */
 	return Qnil;

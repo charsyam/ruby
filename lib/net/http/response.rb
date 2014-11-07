@@ -262,8 +262,10 @@ class Net::HTTPResponse
         e = $!
         begin
           inflate_body_io.finish
-        rescue
-          raise e
+        rescue => e2
+          raise e unless e2.class == Zlib::BufError
+          #skip Zlib::BufError when call finish. 
+          #to keep compatibility for broken compress block
         end
       end
     when 'none', 'identity' then
